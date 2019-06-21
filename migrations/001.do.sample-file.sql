@@ -1,2 +1,0 @@
--- add to the schema in the .do files
--- execute with npm run migrate
