@@ -5,8 +5,10 @@ const morgan = require('morgan');
 const cors = require('cors');
 const helmet = require('helmet');
 const { NODE_ENV } = require('./config');
-
 const app = express();
+
+const usersRouter = require('./users/users_router');
+const adoptions = require('./adoptions/adoptions_router');
 
 const morganOption = (NODE_ENV === 'production')
   ? 'tiny'
@@ -14,7 +16,7 @@ const morganOption = (NODE_ENV === 'production')
 
 app.use(morgan(morganOption));
 app.use(helmet());
-app.use(express.json());
+
 
 // whitelist allowed origins
 const allowedOrigins = ['http://localhost:3000', 'http://my-prod-client-app-url'];
@@ -30,6 +32,9 @@ app.use(cors({
     return callback(null, true);
   }
 }));
+
+app.use('/api/users', usersRouter);
+app.use('/api/adoptions', adoptions);
 
 app.get('/', (req, res) => {
   res.send('Hello World!');
