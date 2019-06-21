@@ -78,20 +78,33 @@ adoptionsRouter
       if (dogObj.photos.length) {
         return buildAnimalObj(dogObj);
       }
-    });
+    }).filter(Boolean);
+
     const cats = catData.data.animals.map(catObj => {
       if (catObj.photos.length) {
         return buildAnimalObj(catObj);
       }
-    });
+    }).filter(Boolean);
 
     dogs.forEach(dog => DogQueue.enqueue(dog));
     cats.forEach(cat => CatQueue.enqueue(cat));
     res.json({dog: utils.peek(DogQueue), cat: utils.peek(CatQueue)});
   });
 
+adoptionsRouter
+  .route('/dog')
+  .delete((req, res, next) => {
+    const user = UserQueue.dequeue();
+    const dog = DogQueue.dequeue();
+    res.json({user, dog});
+  });
 
-  
-
+adoptionsRouter
+  .route('/cat')
+  .delete((req, res, next) => {
+    const user = UserQueue.dequeue();
+    const cat = CatQueue.dequeue();
+    res.json({user, cat});
+  });
 
 module.exports = adoptionsRouter;
