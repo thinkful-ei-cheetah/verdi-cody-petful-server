@@ -106,7 +106,7 @@ adoptionsRouter
   .delete((req, res, next) => {
     const user = UserQueue.dequeue();
     const dog = DogQueue.dequeue();
-    res.json({user, dog});
+    res.json({user, animal: dog});
   })
   .get((req, res, next) => {
     res.json({dog: utils.peek(DogQueue)});
@@ -117,7 +117,7 @@ adoptionsRouter
   .delete((req, res, next) => {
     const user = UserQueue.dequeue();
     const cat = CatQueue.dequeue();
-    res.json({user, cat});
+    res.json({user, animal: cat});
   })
   .get((req, res, next) => {
     res.json({cat: utils.peek(CatQueue)});
