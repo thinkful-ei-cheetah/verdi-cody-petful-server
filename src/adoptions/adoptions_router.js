@@ -4,7 +4,6 @@ const qs = require('querystring');
 const moment = require('moment');
 const express = require('express');
 const adoptionsRouter = express.Router();
-const bodyParser = express.json();
 const UserQueue = require('../users/user_queue');
 const DogQueue = require('./dog_queue');
 const CatQueue = require('./cat_queue');
@@ -16,13 +15,28 @@ const authToken = {
   expiresAt: moment()
 };
 
-function buildAnimalObj(res) {
+function buildAnimalObj(res, type) {
+  let photo;
+  let description;
+  if (res.photos.length) {
+    photo = res.photos[0].large;
+    description = res.description;
+  } else {
+    if (type === 'cat') {
+      photo = 'https://images.unsplash.com/photo-1518791841217-8f162f1e1131?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&w=1000&q=80';
+      description = 'Oh no! My shelter was too lazy to upload a description about me';
+    } else {
+      photo = 'https://s3.amazonaws.com/cdn-origin-etr.akc.org/wp-content/uploads/2017/11/13002253/GettyImages-521536928-_1_.jpg';
+      description = 'Oh no! My shelter was too lazy to upload a description about me';
+    }
+  }
+  
   return {
     gender: res.gender,
     size: res.size,
     name: res.name,
-    description: res.description,
-    photo: res.photos[0].large
+    description,
+    photo
   };
 }
 
@@ -58,7 +72,7 @@ async function getAuthToken(req, res, next) {
 adoptionsRouter
   .route('/')
   .get(getAuthToken, async (req, res, next) => {
-    const zipcode = req.params.zipcode || '95677';
+    const zipcode = req.query.zipcode || '95677';
     const baseUrl = process.env.PETFINDER_API_URL;
 
     const dogRequest = axios.get(`${baseUrl}/animals?type=dog&location=${zipcode}`, {
@@ -73,17 +87,13 @@ adoptionsRouter
     });
 
     const [dogData, catData] = await Promise.all([dogRequest, catRequest]);
-
+    
     const dogs = dogData.data.animals.map(dogObj => {
-      if (dogObj.photos.length) {
-        return buildAnimalObj(dogObj);
-      }
+      return buildAnimalObj(dogObj, 'dog');
     }).filter(Boolean);
 
     const cats = catData.data.animals.map(catObj => {
-      if (catObj.photos.length) {
-        return buildAnimalObj(catObj);
-      }
+      return buildAnimalObj(catObj, 'cat');
     }).filter(Boolean);
 
     dogs.forEach(dog => DogQueue.enqueue(dog));
@@ -97,6 +107,9 @@ adoptionsRouter
     const user = UserQueue.dequeue();
     const dog = DogQueue.dequeue();
     res.json({user, dog});
+  })
+  .get((req, res, next) => {
+    res.json({dog: utils.peek(DogQueue)});
   });
 
 adoptionsRouter
@@ -105,6 +118,9 @@ adoptionsRouter
     const user = UserQueue.dequeue();
     const cat = CatQueue.dequeue();
     res.json({user, cat});
+  })
+  .get((req, res, next) => {
+    res.json({cat: utils.peek(CatQueue)});
   });
 
 module.exports = adoptionsRouter;
