@@ -19,7 +19,7 @@ app.use(helmet());
 
 
 // whitelist allowed origins
-const allowedOrigins = ['http://localhost:3000', 'https://petful.verdi327.now.sh/'];
+const allowedOrigins = ['http://localhost:3000', 'https://petful.verdi327.now.sh', 'https://petful.verdi327.now.sh/'];
 app.use(cors({
   origin: function(origin, callback){
     // allow requests with no origin - like mobile apps, curl, postman
