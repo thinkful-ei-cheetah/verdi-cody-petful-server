@@ -1,29 +1,49 @@
-# Express Boilerplate!
+# Petful-server
+This is a server created by Cody Gillette and Michael Verdi for our pet adoption app.
 
-This is a boilerplate project used for starting new projects!
 
-## Set up
+The client's README should reflect the introduction present in your app, and link to the live app.
+Include screenshots if you can!
+This application alows users to fill out a form to start adopting the new pet of there dreams!
+once you sign in you will be placed into a queue and wait your turn to chose the newest member of you family.
+ # live link
+ https://petful.cgillette12.now.sh/
 
-Complete the following steps to start a new project (NEW-PROJECT-NAME):
+# api service 
+The server's README should explain how other developers would consume (or use) your API, and provide example requests and responses.
 
-1. Clone this repository to your local machine `git clone BOILERPLATE-URL NEW-PROJECTS-NAME`
-2. `cd` into the cloned repository
-3. Make a fresh start of the git history for this project with `rm -rf .git && git init`
-4. Install the node dependencies `npm install`
-5. Move the example Environment file to `.env*` that will be ignored by git and read by the express server `mv example.env .env` and to test `mv example.env .env.test`
-6. Edit the contents of the `package.json` to use NEW-PROJECT-NAME instead of `"name": "express-boilerplate",`
-7. Create your dev and test databases locally
-8. Update the .env file with your database info
-9. Create migrations and run the seed file -- to run test migrations set NODE_ENV - `NODE_ENV=test npm run migrate`
+ When you using this api you have diffent methods 'GET / POST / DELETE
 
-## Scripts
+"https://api.petfinder.com/v2"
 
-Start the application `npm start`
 
-Start nodemon for the application `npm run dev`
+GET
+/api/adoptions 
+/api/adoptions/dogs or /api/adoptions/cats
 
-Run the tests `npm test`
+return {
+    gender,
+    size,
+    name,
+    description,
+    photo
+  };
 
-## Deploying
+  /api/users
 
-When your new project is ready for deployment, add a new Heroku application with `heroku create`. This will make a new git remote called "heroku" and you can then `npm run deploy` which will push to this remote's master branch.
+POST 
+return {
+  full_name,
+  email,
+  zipcode,
+}
+
+DELETE{
+  dog,
+  cat,
+}
+
+Both READMEs should also explain the tech stacks used in the repo, for the benefit of developers who might want to work on your project.
+UTILIZES a in memory QUEUE DATA structure
+REACT NODE EXPRESS 
+
